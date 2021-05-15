@@ -9,7 +9,6 @@ import 'base.dart';
 
 class WebviewScaffold extends StatefulWidget {
   const WebviewScaffold({
-    Key? key,
     this.appBar,
     required this.url,
     this.headers,
@@ -41,7 +40,7 @@ class WebviewScaffold extends StatefulWidget {
     this.geolocationEnabled,
     this.debuggingEnabled = false,
     this.ignoreSSLErrors = false,
-  }) : super(key: key);
+  });
 
   final PreferredSizeWidget? appBar;
   final String url;
@@ -64,7 +63,7 @@ class WebviewScaffold extends StatefulWidget {
   final bool? scrollBar;
   final bool? supportMultipleWindows;
   final bool? appCacheEnabled;
-  final bool hidden;
+  final bool? hidden;
   final Widget? initialChild;
   final bool? allowFileURLs;
   final bool resizeToAvoidBottomInset;
@@ -110,7 +109,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
       }
     });
 
-    if (widget.hidden) {
+    if (widget.hidden!) {
       _onStateChanged =
           webviewReference.onStateChanged.listen((WebViewStateChanged state) {
         if (state.type == WebViewState.finishLoad) {
@@ -134,9 +133,9 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
   void dispose() {
     super.dispose();
     _onBack?.cancel();
-    _resizeTimer!.cancel();
+    _resizeTimer?.cancel();
     webviewReference.close();
-    if (widget.hidden) {
+    if (widget.hidden!) {
       _onStateChanged!.cancel();
     }
     webviewReference.dispose();
@@ -184,7 +183,7 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
           } else {
             if (_rect != value) {
               _rect = value;
-              _resizeTimer!.cancel();
+              _resizeTimer?.cancel();
               _resizeTimer = Timer(const Duration(milliseconds: 250), () {
                 // avoid resizing to fast when build is called multiple time
                 webviewReference.resize(_rect!);
@@ -201,10 +200,9 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
 
 class _WebviewPlaceholder extends SingleChildRenderObjectWidget {
   const _WebviewPlaceholder({
-    Key? key,
     required this.onRectChanged,
     Widget? child,
-  }) : super(key: key, child: child);
+  }) : super(child: child);
 
   final ValueChanged<Rect> onRectChanged;
 
@@ -229,7 +227,7 @@ class _WebviewPlaceholderRender extends RenderProxyBox {
   })  : _callback = onRectChanged!,
         super(child);
 
-  ValueChanged<Rect> _callback;
+  ValueChanged<Rect>? _callback;
   Rect? _rect;
 
   Rect get rect => _rect!;
@@ -243,7 +241,7 @@ class _WebviewPlaceholderRender extends RenderProxyBox {
 
   void notifyRect() {
     if (_callback != null && _rect != null) {
-      _callback(_rect!);
+      _callback!(_rect!);
     }
   }
 
