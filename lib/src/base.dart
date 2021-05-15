@@ -199,7 +199,7 @@ class FlutterWebviewPlugin {
       args['headers'] = headers;
     }
 
-    _assertJavascriptChannelNamesAreUnique(javascriptChannels);
+    _assertJavascriptChannelNamesAreUnique(javascriptChannels!);
 
     if (javascriptChannels != null) {
       javascriptChannels.forEach((channel) {
@@ -336,7 +336,7 @@ class FlutterWebviewPlugin {
   }
 
   void _assertJavascriptChannelNamesAreUnique(
-      final Set<JavascriptChannel>? channels) {
+      final Set<JavascriptChannel> channels) {
     if (channels == null || channels.isEmpty) {
       return;
     }
